@@ -1,10 +1,12 @@
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 
-def get_dataloaders(batch_size=64):
+def get_dataloaders(batch_size=128, device="cpu"):
+
     transform = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor()
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5),
+                             (0.5, 0.5, 0.5))
     ])
 
     train_dataset = datasets.CIFAR10(
@@ -20,7 +22,7 @@ def get_dataloaders(batch_size=64):
         batch_size=batch_size,
         shuffle=True,
         num_workers=2,
-        pin_memory=False
+        pin_memory=(device == "cuda")
     )
 
     test_loader = DataLoader(
@@ -28,7 +30,7 @@ def get_dataloaders(batch_size=64):
         batch_size=batch_size,
         shuffle=False,
         num_workers=2,
-        pin_memory=False
+        pin_memory=(device == "cuda")
     )
 
     return train_loader, test_loader
